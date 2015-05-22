@@ -102,7 +102,7 @@ def printState(state):
     lvl.printLvl()
 
 def printMoves(moves):
-    commands = {'l':'left','r':'right','u':'up','d':'down'}
+    commands = {'l':'left','r':'right','u':'up','d':'down','tab':'tab'}
     def add(count,last):
         if last is not None:
             cmds.append(str(count)+'x '+commands[last])
@@ -207,19 +207,19 @@ def getPoss(state,moves):
             elif blockval == 'e':
                 del newsnakes[player]
             elif blockval.upper() != snakenames[player] and blockval.upper() in snakenames:
-                newlvl = fillLvl(state)
+                newlvl = Level.lvlfromstate(state)
                 pushsnakei = snakenames.index(blockval.upper())
                 allvalid = False
                 try:
                     if not moveSnake(newlvl,newsnakes[pushsnakei],snakenames[pushsnakei].lower(),move):
                         advanceSnake(newsnakes[player],move)
+                        #TODO is definitely a bug, could 
                         if touchingGround(lvl,newsnakes[player]):
                             allvalid = True
                 except Exception as e:
                     pass
             else:
                 allvalid = False
-
             if allvalid:
                 try:
                     gravity(newsnakes,newfruits)
@@ -252,91 +252,3 @@ def goal(state):
 def printstate(state,moves):
     printState(state)
     printMoves(moves)
-
-level = """      sssssssssssssss            
-               www               
-                w                
-           w rR w e              
-         w   Gg                  
-           fsfw  w               
-          s      w               
-          ww w   w               
-          ww w   w               
-          ww w   w               
-          ww w   w               
-          ww w   w               """
-
-#1
-level = """                                 
-                                 
-            e                    
-                                 
-         w                       
-         f  wfw                  
-                                 
-          wgG                    
-          wwww                   
-          wwww                   
-          wwww                   
-          wwww                   
-          wwww                   """
-#2
-level = """                                 
-                                 
-                                 
-   wwwwwwwwwwwww                 
-   wwwwwwwwwwwww  e              
-   wwwwwwwwwwwww                 
-   wwwwwwwwww fw                 
-   wwwwwwwwww     Gggf           
-   wwwwwwwwww  wwwww             
-   wwwwwwwwwwwwwwwww             
-   wwwwwwwwwwwwwwwww             
-   wwwwwwwwwwwwwwwww             
-   wwwwwwwwwwwwwwwww             """
-#3
-level = """                                 
-                                 
-                                 
-        e                        
-    gG                           
-    gf    f                      
-      s                          
-      swwwwwwwwww                
-    wwwwwwwwwwwww                
-    wwwwwwwwwwwww                
-    wwwwwwwwwwwww                
-    wwwwwwwwwwwww                
-                                 """
-#4
-level = """                                 
-                                 
-                                 
-                                 
-           ggG e                 
-           gw                    
-                                 
-         ws   sw                 
-          s                      
-          ssws                   
-            f                    
-              w                  
-             ww                  
-             ww                  
-                                 """
-#5
-level = """                                 
-                                 
-                                 
-                                 
-               e                 
-             w                   
-            f  fw                
-                                 
-            sw  w                
-             gGss                
-             gws                 
-                                 
-                                 
-                                 
-                                 """

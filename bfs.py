@@ -13,7 +13,7 @@ def start(problem,maxdepth):
                     return
                 hashr = str(poss)
                 if(hashr not in allposs):
-                    problem.printstate(poss,newmoves)
+                    #problem.printstate(poss,newmoves)
                     allposs.append(hashr)
                     nextqueue.append((poss,newmoves))
         queue = nextqueue
