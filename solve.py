@@ -10,4 +10,4 @@ fil.close()
 level = level[:-1]
 
 game.setLevel(level)
-bfs.start(game,200)
+bfs.start(game,200 if len(sys.argv)<=2 else int(sys.argv[2]))

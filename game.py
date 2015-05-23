@@ -4,6 +4,9 @@ snakenames = ['R','G','Y']
 possmoves = [(1,0),(-1,0),(0,1),(0,-1)]
 moveIndexName = ['r','l','d','u']
 
+class DiedException(Exception):
+    pass
+
 class Level:
     def __init__(self,strlvl=None):
         if strlvl is not None:
@@ -134,7 +137,11 @@ def moveSnake(lvl,snake,snakesym,direction):
     hit = False
     spikes = 0
     for el in snake:
-        val = lvl.data[el[1]+direction[1]][el[0]+direction[0]].lower()
+        x = el[0]+direction[0]
+        y = el[1]+direction[1]
+        if y>=lvl.height:
+            raise DiedException()
+        val = lvl.data[y][x].lower()
         if val=='s':
             spikes+=1
         elif val!=snakesym and val!=' ' and val!='e':
@@ -142,24 +149,18 @@ def moveSnake(lvl,snake,snakesym,direction):
             break
     if not hit:
         if spikes>0:
-            raise Exception(snakesym+ ' died')
+            raise DiedException()
         for el in snake:
+            lvl.data[el[1]][el[0]] = ' '
+        for eli,el in enumerate(snake):
             el[0]+=direction[0]
             el[1]+=direction[1]
+            lvl.data[el[1]][el[0]] = snakesym if eli==0 else snakesym.lower()
     return hit
-
-def touchingGround(lvl,snake):
-    # TODO touching ground by lying on other snake
-    for el in snake:
-        val = lvl.data[el[1]+1][el[0]].lower()
-        if val=='w' or val=='f':
-            return True
-    return False
 
 def gravity(snakes,fruits):
     # TODO could fall into goal with the head
     lvl = Level.lvlfromstate((snakes,fruits,None))
-    madechange = False
     while True:
         allonground = True
         for snakei,snake in enumerate(snakes):
@@ -168,14 +169,11 @@ def gravity(snakes,fruits):
                 madechange = True
         if allonground:
             break
-    return madechange
-
 
 def getPoss(state,moves):
     snakes,fruits,player = state
     if player>=len(snakes):
         player=0
-    #print('computing possibilities for: '+str(state))
     poss = []
     def addposs(state,m):
         newmoves = copy.deepcopy(moves)
@@ -213,10 +211,8 @@ def getPoss(state,moves):
                 try:
                     if not moveSnake(newlvl,newsnakes[pushsnakei],snakenames[pushsnakei].lower(),move):
                         advanceSnake(newsnakes[player],move)
-                        #TODO is definitely a bug, could 
-                        if touchingGround(lvl,newsnakes[player]):
-                            allvalid = True
-                except Exception as e:
+                        allvalid = True
+                except DiedException as e:
                     pass
             else:
                 allvalid = False
@@ -224,11 +220,10 @@ def getPoss(state,moves):
                 try:
                     gravity(newsnakes,newfruits)
                     addposs((newsnakes,newfruits,player),moveIndexName[movei])
-                except Exception as e:
+                except DiedException as e:
                     pass
     else:
         print('No player pos!!!')
-
     return poss
 
 def setLevel(lvl):
