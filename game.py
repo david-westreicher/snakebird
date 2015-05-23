@@ -185,45 +185,44 @@ def getPoss(state,moves):
     # move player
     lvl = Level.lvlfromstate(state)
     playerpos = lvl.find(snakenames[player])
-    if playerpos is not None:
-        for movei,move in enumerate(possmoves):
-            newx = playerpos[0]+move[0]
-            newy = playerpos[1]+move[1]
-            blockval = lvl.data[newy][newx]
-            newsnakes = copy.deepcopy(snakes)
-            newfruits = copy.deepcopy(fruits)
-            allvalid = True
-            if blockval == ' ':
-                advanceSnake(newsnakes[player],move)
-            elif blockval == 'f':
-                newsnakes[player].insert(0,[newx,newy])
-                for fruiti,fruit in enumerate(newfruits):
-                    if fruit[0]==newx and fruit[1]==newy:
-                        break
-                if fruiti>=0:
-                    del newfruits[fruiti]
-            elif blockval == 'e':
-                del newsnakes[player]
-            elif blockval.upper() != snakenames[player] and blockval.upper() in snakenames:
-                newlvl = Level.lvlfromstate(state)
-                pushsnakei = snakenames.index(blockval.upper())
-                allvalid = False
-                try:
-                    if not moveSnake(newlvl,newsnakes[pushsnakei],snakenames[pushsnakei].lower(),move):
-                        advanceSnake(newsnakes[player],move)
-                        allvalid = True
-                except DiedException as e:
-                    pass
-            else:
-                allvalid = False
-            if allvalid:
-                try:
-                    gravity(newsnakes,newfruits)
-                    addposs((newsnakes,newfruits,player),moveIndexName[movei])
-                except DiedException as e:
-                    pass
-    else:
-        print('No player pos!!!')
+    if playerpos is None:
+        return []
+    for movei,move in enumerate(possmoves):
+        newx = playerpos[0]+move[0]
+        newy = playerpos[1]+move[1]
+        blockval = lvl.data[newy][newx]
+        newsnakes = copy.deepcopy(snakes)
+        newfruits = copy.deepcopy(fruits)
+        allvalid = True
+        if blockval == ' ':
+            advanceSnake(newsnakes[player],move)
+        elif blockval == 'f':
+            newsnakes[player].insert(0,[newx,newy])
+            for fruiti,fruit in enumerate(newfruits):
+                if fruit[0]==newx and fruit[1]==newy:
+                    break
+            if fruiti>=0:
+                del newfruits[fruiti]
+        elif blockval == 'e':
+            del newsnakes[player]
+        elif blockval.upper() != snakenames[player] and blockval.upper() in snakenames:
+            newlvl = Level.lvlfromstate(state)
+            pushsnakei = snakenames.index(blockval.upper())
+            allvalid = False
+            try:
+                if not moveSnake(newlvl,newsnakes[pushsnakei],snakenames[pushsnakei].lower(),move):
+                    advanceSnake(newsnakes[player],move)
+                    allvalid = True
+            except DiedException as e:
+                pass
+        else:
+            allvalid = False
+        if allvalid:
+            try:
+                gravity(newsnakes,newfruits)
+                addposs((newsnakes,newfruits,player),moveIndexName[movei])
+            except DiedException as e:
+                pass
     return poss
 
 def setLevel(lvl):
