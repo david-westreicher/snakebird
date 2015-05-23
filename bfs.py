@@ -1,7 +1,10 @@
 def start(problem,maxdepth):
     states = 1
-    queue = [(problem.init(),[])]
-    allposs = {str(queue[0][0]):True}
+    startstate = problem.init()
+    queue = [(startstate,[])]
+    allposs = {str(startstate):True}
+    print('Finding solution for:')
+    problem.printstate(startstate)
     for i in range(maxdepth):
         nextqueue = []
         print('#####DEPTH'+str(i)+'#####')

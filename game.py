@@ -48,13 +48,11 @@ class Level:
 
     @staticmethod
     def lvlfromstate(state):
-        return level.newlvl(state)
-
-    def newlvl(self,state):
+        globallevel = Level.globallevel
         newlevel = Level()
-        newlevel.width = self.width
-        newlevel.height = self.height
-        newlevel.data = copy.deepcopy(self.data)
+        newlevel.width = globallevel.width
+        newlevel.height = globallevel.height
+        newlevel.data = copy.deepcopy(globallevel.data)
         snakes,fruits,_ = state
         for snakeid,snake in enumerate(snakes):
             name = snakenames[snakeid]
@@ -230,11 +228,8 @@ def setLevel(lvl):
     strlvl = lvl
 
 def init():
-    global level
-    level = Level(strlvl)
-    snakes,fruits = level.init()
-    level.printLvl()
-    print(snakes,fruits)
+    Level.globallevel = Level(strlvl)
+    snakes,fruits = Level.globallevel.init()
     return (snakes,fruits,0)
 
 def goal(state):
@@ -243,6 +238,7 @@ def goal(state):
         return True
     return False
 
-def printstate(state,moves):
+def printstate(state,moves=None):
     printState(state)
-    printMoves(moves)
+    if moves is not None:
+        printMoves(moves)
