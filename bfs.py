@@ -14,7 +14,7 @@ def start(problem,maxdepth):
                 if problem.goal(poss):
                     print('Reached GOAL at depth: '+str(i)+' with visiting '+str(states)+' states')
                     problem.printstate(poss,newmoves)
-                    return
+                    return newmoves
                 hashr = str(poss)
                 if(hashr not in allposs):
                     #problem.printstate(poss,newmoves)

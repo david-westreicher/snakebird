@@ -2,7 +2,7 @@ import copy
 
 snakenames = ['R','G','Y']
 possmoves = [(1,0),(-1,0),(0,1),(0,-1)]
-moveIndexName = ['r','l','d','u']
+moveIndexName = ['right','left','down','up']
 
 class DiedException(Exception):
     pass
@@ -103,10 +103,9 @@ def printState(state):
     lvl.printLvl()
 
 def printMoves(moves):
-    commands = {'l':'left','r':'right','u':'up','d':'down','tab':'tab'}
     def add(count,last):
         if last is not None:
-            cmds.append(str(count)+'x '+commands[last])
+            cmds.append(str(count)+'x '+last)
 
     last = None
     count = 1
@@ -173,13 +172,13 @@ def getPoss(state,moves):
     if player>=len(snakes):
         player=0
     poss = []
-    def addposs(state,m):
+    def addposs(state,mvs):
         newmoves = copy.deepcopy(moves)
-        newmoves.append(m)
+        newmoves.extend(mvs)
         poss.append((state,newmoves))
     # press tab
     if len(snakes)>1:
-        addposs((snakes,fruits,(player+1)%len(snakes)),'tab')
+        addposs((snakes,fruits,(player+1)%len(snakes)),['tab'])
     # move player
     lvl = Level.lvlfromstate(state)
     playerpos = lvl.find(snakenames[player])
@@ -192,6 +191,7 @@ def getPoss(state,moves):
         newsnakes = copy.deepcopy(snakes)
         newfruits = copy.deepcopy(fruits)
         allvalid = True
+        newmvs = [moveIndexName[movei]]
         if blockval == ' ':
             advanceSnake(newsnakes[player],move)
         elif blockval == 'f':
@@ -203,6 +203,7 @@ def getPoss(state,moves):
                 del newfruits[fruiti]
         elif blockval == 'e':
             del newsnakes[player]
+            newmvs.append('wait')
         elif blockval.upper() != snakenames[player] and blockval.upper() in snakenames:
             newlvl = Level.lvlfromstate(state)
             pushsnakei = snakenames.index(blockval.upper())
@@ -218,7 +219,7 @@ def getPoss(state,moves):
         if allvalid:
             try:
                 gravity(newsnakes,newfruits)
-                addposs((newsnakes,newfruits,player),moveIndexName[movei])
+                addposs((newsnakes,newfruits,player),newmvs)
             except DiedException as e:
                 pass
     return poss
