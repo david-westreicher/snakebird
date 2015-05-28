@@ -1,6 +1,6 @@
 import copy
 
-snakenames = ['R','G','Y']
+snakenames = ['R','G','Y','B']
 possmoves = [(1,0),(-1,0),(0,1),(0,-1)]
 moveIndexName = ['right','left','down','up']
 
@@ -187,6 +187,8 @@ def getPoss(state,moves):
     for movei,move in enumerate(possmoves):
         newx = playerpos[0]+move[0]
         newy = playerpos[1]+move[1]
+        if newy>=lvl.height or newx>=lvl.width or newy<0 or newx<0:
+            continue
         blockval = lvl.data[newy][newx]
         newsnakes = copy.deepcopy(snakes)
         newfruits = copy.deepcopy(fruits)

@@ -1,2 +1,6 @@
+patches
+classifiedpatches
 old/*
 *.pyc
+screens/
+svm.conf
